@@ -20,7 +20,7 @@ I split the pipeline into three stages — load and validation, transcription, a
 
 ### Class for the loader, functions for the rest
 
-`AudioLoader` is a class because it holds state — the validated file path — and has a clear lifecycle: construct, validate, use. Transcription and segment extraction, on the other hand, are pure transformations with no state to manage, so plain functions are simpler and more honest about what they do. I avoided wrapping everything in classes just for symmetry; classes without state are just namespaces with extra ceremony.
+`AudioLoader` is a class because it holds state — the validated file path — and has a clear lifecycle: construct, validate, use. Transcription and segment extraction, on the other hand, are pure transformations with no state to manage, so plain functions are simpler.
 
 ### Fail fast on invalid input
 
@@ -36,12 +36,9 @@ Rather than extracting only the text or only the segments inside `transcribe()`,
 
 ### Exceptions for error handling
 
-Each failure mode raises a distinct exception type — `FileNotFoundError` for missing files, `ValueError` for unsupported formats, and `RuntimeError` for API failures. This follows Python conventions and lets callers handle each case differently, for example retrying on a `RuntimeError` but not on a `ValueError`.
-
+Each failure mode raises a distinct exception type — `FileNotFoundError` for missing files, `ValueError` for unsupported formats, and `RuntimeError` for API failures. 
 ### Timestamps in milliseconds internally
 
 AssemblyAI returns timestamps in milliseconds, and `get_segments()` preserves that. Conversion to seconds happens only at the display layer, when printing. Keeping internal data in the API's native unit avoids precision loss and makes it obvious when a conversion is happening.
 
-### API key loaded from environment
 
-The API key is read from a `.env` file via `python-dotenv` rather than being embedded in the source. This keeps secrets out of version control, lets the same code run against different accounts in different environments, and follows standard twelve-factor configuration practice. A `.env.example` file documents which variables the project expects.
