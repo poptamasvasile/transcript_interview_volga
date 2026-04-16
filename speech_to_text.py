@@ -2,11 +2,12 @@ import os
 import assemblyai as aai
 import os
 from dotenv import load_dotenv
+
+
 load_dotenv()
 aai.settings.api_key = os.environ["ASSEMBLYAI_API_KEY"]
 
 
-# ── Step 1: Audio file loader ────────────────────────────────────────────────
 
 class AudioLoader:
     """Loads and validates an audio file. Supports multiple formats.
@@ -31,7 +32,6 @@ class AudioLoader:
         return self.file_path
 
 
-# ── Step 2: Transcription ────────────────────────────────────────────────────
 
 def transcribe(file_path: str) -> aai.Transcript:
     """Transcribes an audio file and returns the full AssemblyAI Transcript object."""
@@ -44,7 +44,7 @@ def transcribe(file_path: str) -> aai.Transcript:
     return transcript
 
 
-# ── Step 3: Service — transcription with timestamps per segment ──────────────
+
 
 def get_segments(transcript: aai.Transcript) -> list[dict]:
     """Returns a list of sentence-level segments, each with start/end timestamps."""
@@ -58,21 +58,18 @@ def get_segments(transcript: aai.Transcript) -> list[dict]:
     ]
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+
 
 if __name__ == "__main__":
     audio_file = r"C:\Users\volteanu\Desktop\interviu\transcription-pipeline\harvard.wav"
 
-    # Step 1 — load & validate
     loader = AudioLoader(audio_file)
     file_path = loader.load()
 
-    # Step 2 — transcribe
     transcript = transcribe(file_path)
     print("Full transcription:")
     print(transcript.text)
 
-    # Step 3 — segments with timestamps
     segments = get_segments(transcript)
     print("\nSegments with timestamps:")
     for seg in segments:
